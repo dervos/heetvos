@@ -25,7 +25,6 @@ import { asyncConnect } from 'redux-async-connect';
       promises.push(dispatch(loadAuth()));
     }
     promises.push(dispatch(fetchPhotosIfNeeded()));
-
     return Promise.all(promises);
   }
 }])

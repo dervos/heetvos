@@ -1,18 +1,42 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import {
-  selectMethod,
-  fetchPhotosIfNeeded,
-  invalidateMethod
-} from 'redux/modules/photos'
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { asyncConnect } from 'redux-async-connect';
+import { selectMethod, fetchPhotosIfNeeded, invalidateMethod } from 'redux/modules/photos';
+import { Picker, Photos } from 'components';
 
-import { Picker, Photos } from 'components'
+function mapStateToProps(state) {
+  const { selectedMethod, photosFromMethod } = state
+  const {
+    isFetching,
+    lastUpdated,
+    items: photos
+  } = photosFromMethod[selectedMethod] || {
+    isFetching: true,
+    items: []
+  }
 
-class Gallery extends React.Component {
+  return {
+    selectedMethod,
+    photos,
+    isFetching,
+    lastUpdated
+  }
+}
+
+@asyncConnect([{
+  deferred: true,
+  promise: ({store: {dispatch, getState}}) => {
+    return dispatch(fetchPhotosIfNeeded);
+  }
+}])
+@connect(mapStateToProps)
+export default class Gallery extends React.Component {
   constructor(props) {
     super(props)
+    this.handleChange = this.handleChange.bind(this)
+    this.handleRefreshClick = this.handleRefreshClick.bind(this)
   }
+
   componentDidMount() {
     const { dispatch, selectedMethod } = this.props
     dispatch(fetchPhotosIfNeeded(selectedMethod))
@@ -25,9 +49,11 @@ class Gallery extends React.Component {
     }
   }
 
-  handleChange = (nextMethod) => this.props.dispatch(selectMethod(nextMethod))
+  handleChange(nextMethod) {
+    this.props.dispatch(selectMethod(nextMethod))
+  }
 
-  handleRefreshClick = (e) => {
+  handleRefreshClick(e) {
     e.preventDefault()
 
     const { dispatch, selectedMethod } = this.props
@@ -78,30 +104,11 @@ class Gallery extends React.Component {
 }
 
 Gallery.propTypes = {
-  selectedMethod: React.PropTypes.string.isRequired,
-  photos: React.PropTypes.array.isRequired,
-  isFetching: React.PropTypes.bool.isRequired,
-  lastUpdated: React.PropTypes.number,
-  dispatch: React.PropTypes.func.isRequired
+  selectedMethod: PropTypes.string.isRequired,
+  photos: PropTypes.array.isRequired,
+  isFetching: PropTypes.bool.isRequired,
+  lastUpdated: PropTypes.number,
+  dispatch: PropTypes.func.isRequired
 }
 
-function mapStateToProps(state) {
-  const { selectedMethod, photosFromMethod } = state
-  const {
-    isFetching,
-    lastUpdated,
-    items: photos
-  } = photosFromMethod[selectedMethod] || {
-    isFetching: true,
-    items: []
-  }
 
-  return {
-    selectedMethod,
-    photos,
-    isFetching,
-    lastUpdated
-  }
-}
-
-export default connect(mapStateToProps)(Gallery)

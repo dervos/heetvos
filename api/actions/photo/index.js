@@ -1,1 +1,1 @@
-export fetchPhotosIfNeeded from './fetchPhotosIfNeeded'
+export fetchPhotos from './fetch'

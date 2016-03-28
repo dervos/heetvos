@@ -1,16 +1,16 @@
+import fetch from 'isomorphic-fetch'
 
 const REQUEST_PHOTOS = 'REQUEST_PHOTOS';
 const RECEIVE_PHOTOS = 'RECEIVE_PHOTOS';
 const SELECT_METHOD = 'SELECT_METHOD';
 const INVALIDATE_METHOD = 'INVALIDATE_METHOD';
 
-
 export function selectedMethod(state = 'user', action) {
   switch (action.type) {
     case SELECT_METHOD:
-      return action.method;
+      return action.method
     default:
-      return state;
+      return state
   }
 }
 
@@ -23,19 +23,19 @@ function photos(state = {
     case INVALIDATE_METHOD:
       return Object.assign({}, state, {
         didInvalidate: true
-      });
+      })
     case REQUEST_PHOTOS:
       return Object.assign({}, state, {
         isFetching: true,
         didInvalidate: false
-      });
+      })
     case RECEIVE_PHOTOS:
       return Object.assign({}, state, {
         isFetching: false,
         didInvalidate: false,
         items: action.photos,
         lastUpdated: action.receivedAt
-      });
+      })
     default:
       return state;
   }
@@ -48,7 +48,7 @@ export function photosFromMethod(state = { }, action) {
     case REQUEST_PHOTOS:
       return Object.assign({}, state, {
         [action.method]: photos(state[action.method], action)
-      });
+      })
     default:
       return state;
   }
@@ -78,8 +78,8 @@ function requestPhotos(method) {
 function receivePhotos(method, json) {
   return {
     type: RECEIVE_PHOTOS,
-    method: method,
-    photos: json.photos.map(photo => photo),
+    method,
+    photos: json.photos,
     receivedAt: Date.now()
   };
 }
@@ -90,25 +90,25 @@ function fetchPhotos(method) {
     return fetch(`https://api.500px.com/v1/photos?feature=${method}&username=dervos&consumer_key=GvEAXk6cHDuELGqcaV38N2w7LjBTgcha8oVn8zwY&image_size=3&sort=created_at&rpp=25`)
       .then(response => response.json())
       .then(json => dispatch(receivePhotos(method, json)));
-  };
+  }
 }
 
 function shouldFetchPhotos(state, method) {
   const photos = state.photosFromMethod[method];
   if (!photos) {
     return true;
-  }
-  if (photos.isFetching) {
+  } else if (photos.isFetching) {
     return false;
+  } else {
+    return photos.didInvalidate;
   }
-  return photos.didInvalidate;
 }
+
 
 export function fetchPhotosIfNeeded(method) {
   return (dispatch, getState) => {
     if (shouldFetchPhotos(getState(), method)) {
-      return dispatch(fetchPhotos(method));
+      return dispatch(fetchPhotos(method))
     }
-  };
+  }
 }
-
