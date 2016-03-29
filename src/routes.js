@@ -51,7 +51,7 @@ export default (store) => {
       <Route path="gallery" component={Gallery} />
       <Route path="login" component={Login} />
       <Route path="survey" component={Survey} />
-      <Route path="widgets" component={Widgets} />
+      <Route path="widgets/:method" component={Widgets} />
 
       { /* Catch all route */ }
       <Route path="*" component={NotFound} status={404} />

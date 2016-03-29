@@ -1,16 +1,13 @@
 import React, { PropTypes } from 'react'
 
-const Photos = ({ photos }) => (
+const Photos = ({ photo }) => (
   <ul>
-    { photos.map((photo) => {
-      <img key={photo.id} title={photo.name} src={photo.image_url} />
-      })
-    }
+    <img key={photo.id} title={photo.name} src={photo.image_url} />
   </ul>
 )
 
 Photos.propTypes = {
-  photos: PropTypes.array.isRequired
+  photo: PropTypes.object.isRequired
 }
 
 export default Photos

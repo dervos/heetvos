@@ -4,33 +4,7 @@ import { asyncConnect } from 'redux-async-connect';
 import { selectMethod, fetchPhotosIfNeeded, invalidateMethod } from 'redux/modules/photos';
 import { Picker, Photos } from 'components';
 
-function mapStateToProps(state) {
-  const { selectedMethod, photosFromMethod } = state
-  const {
-    isFetching,
-    lastUpdated,
-    items: photos
-  } = photosFromMethod[selectedMethod] || {
-    isFetching: true,
-    items: []
-  }
-
-  return {
-    selectedMethod,
-    photos,
-    isFetching,
-    lastUpdated
-  }
-}
-
-@asyncConnect([{
-  deferred: true,
-  promise: ({store: {dispatch, getState}}) => {
-    return dispatch(fetchPhotosIfNeeded);
-  }
-}])
-@connect(mapStateToProps)
-export default class Gallery extends React.Component {
+class Gallery extends React.Component {
   constructor(props) {
     super(props)
     this.handleChange = this.handleChange.bind(this)
@@ -95,7 +69,7 @@ export default class Gallery extends React.Component {
         {isEmpty
           ? (isFetching ? <h2>Loading...</h2> : <h2>Empty.</h2>)
           : <div style={{ opacity: isFetching ? 0.5 : 1 }}>
-              <Photos photos={photos} />
+              {photos.map(photo => <Photos key={photo.id} photo={photo} />)}
             </div>
         }
       </div>
@@ -111,4 +85,30 @@ Gallery.propTypes = {
   dispatch: PropTypes.func.isRequired
 }
 
+function mapStateToProps(state) {
+  const { selectedMethod, photosFromMethod } = state
+  const {
+    isFetching,
+    lastUpdated,
+    items: photos
+  } = photosFromMethod[selectedMethod] || {
+    isFetching: true,
+    items: []
+  }
 
+  return {
+    selectedMethod,
+    photos,
+    isFetching,
+    lastUpdated
+  }
+}
+
+//@asyncConnect([{
+//    deferred: false,
+//    promise: ({store: {dispatch, getState}}) => {
+//      return dispatch(fetchPhotosIfNeeded);
+//    }
+//}])
+
+export default connect(mapStateToProps)(Gallery)
