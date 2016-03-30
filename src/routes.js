@@ -5,13 +5,11 @@ import {
     App,
     Chat,
     Home,
-    Widgets,
     About,
     Login,
     LoginSuccess,
-    Survey,
-    NotFound,
-    Gallery
+    Gallery,
+    NotFound
   } from 'containers';
 
 export default (store) => {
@@ -50,8 +48,6 @@ export default (store) => {
       <Route path="about" component={About} />
       <Route path="gallery" component={Gallery} />
       <Route path="login" component={Login} />
-      <Route path="survey" component={Survey} />
-      <Route path="widgets/:method" component={Widgets} />
 
       { /* Catch all route */ }
       <Route path="*" component={NotFound} status={404} />

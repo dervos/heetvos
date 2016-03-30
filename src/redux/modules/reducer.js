@@ -16,12 +16,5 @@ export default combineReducers({
   photosFromMethod,
   selectedMethod,
   auth,
-  form,
-  multireducer: multireducer({
-    counter1: counter,
-    counter2: counter,
-    counter3: counter
-  }),
-  info,
-  widgets
+  form
 });

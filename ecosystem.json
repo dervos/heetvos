@@ -1,28 +1,15 @@
 {
   "apps" : [{
     "name"        : "worker-app",
+    "cwd"        : "/home/dervos/code/heetvos",
     "script"      : "./bin/server.js",
     "watch"       : true,
+    "ignore_watch": "node_modules",
     "env": {
       "NODE_ENV": "development",
       "NODE_PATH": "./src",
      "PORT": 3000,
      "APIPORT": 3030
-    },
-    "env_production" : {
-      "NODE_PATH": "./src",
-     "NODE_ENV": "production",
-     "PORT": 8080,
-     "APIPORT": 3030
-    }
-  },{
-    "name"       : "api-app",
-    "script"     : "./bin/api.js",
-    "instances"  : 4,
-    "env": {
-      "NODE_PATH": "./api",
-      "NODE_ENV": "development",
-      "APIPORT": 3030
     }
   }]
 }
