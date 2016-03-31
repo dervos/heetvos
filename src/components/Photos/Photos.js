@@ -4,7 +4,7 @@ import { Divider, Avatar, Space, Text, Flex, Heading, Block, Media, Card, CardIm
 const Photo = ({ id, name, image_url, description, user, url }) => (
   <Card
     style={{
-      boxShadow: '0 0 30px 5px #999',
+      boxShadow: '0 0 15px 1px #999',
       borderWidth: 0
     }}
     rounded={false}
