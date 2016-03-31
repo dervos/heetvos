@@ -11,6 +11,7 @@ const Picker = ({ value, onChange, options }) => (
     />
   </span>
 )
+
 Picker.propTypes = {
   options: PropTypes.arrayOf(
     PropTypes.object.isRequired

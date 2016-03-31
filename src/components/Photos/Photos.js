@@ -1,33 +1,51 @@
 import React, { PropTypes } from 'react'
-import { connect } from 'react-redux'
+import { Divider, Avatar, Space, Text, Flex, Heading, Block, Media, Card, CardImage } from 'rebass'
 
-const Photo = ({name, image_url, onLoad, loaded }) => (
-  <img
+const Photo = ({ id, name, image_url, description, user, url }) => (
+  <Card
     style={{
-      opacity: loaded ? 1 : 0,
-      transition: 'opacity .5s ease-in'}}
-    src={image_url}
-    onLoad={onLoad}
-    title={name} />
+      boxShadow: '0 0 30px 5px #999',
+      borderWidth: 0
+    }}
+    rounded={false}
+  >
+    <CardImage
+      key={id}
+      style={{transition: 'opacity .5s ease-in'}}
+      src={image_url}
+    />
+    <Heading level={3}>
+      {name}
+    </Heading>
+    <Divider />
+    <Text
+      children={description}
+    />
+    <Divider />
+    <Avatar
+      circle={false}
+      size={48}
+      src={user.userpic_url}
+    />
+  </Card>
 )
 
 Photo.propTypes = {
   name: PropTypes.string.isRequired,
-  image_url: PropTypes.string.isRequired,
-  onLoad: PropTypes.func.isRequired,
-  loaded: PropTypes.bool.isRequired
+  image_url: PropTypes.string.isRequired
 }
 
-Photo.defaultProps = { loaded: false }
 
-const Photos = ({ photos, onPhotoLoad }) => (
+const Photos = ({ photos }) => (
   <div>
-    {photos.map((index, photo) =>
+    {photos.map(photo =>
+    <span key={photo.id}>
       <Photo
-        key={index}
+        key={photo.id}
         {...photo}
-        onLoad={() => onPhotoLoad(index)}
       />
+      <Space  x={1} />
+    </span>
     )}
   </div>
 )
@@ -35,8 +53,7 @@ const Photos = ({ photos, onPhotoLoad }) => (
 Photos.defaultProps = { photos: []}
 
 Photos.propTypes = {
-  photos: PropTypes.array.isRequired,
-  onPhotoLoad: PropTypes.func.isRequired
+  photos: PropTypes.array.isRequired
 }
 
 export default Photos

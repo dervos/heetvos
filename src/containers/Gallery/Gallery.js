@@ -3,9 +3,8 @@ import { connect } from 'react-redux'
 import { asyncConnect } from 'redux-async-connect'
 import Helmet from 'react-helmet'
 import { selectMethod, fetchPhotosIfNeeded, invalidateMethod } from 'redux/modules/photos'
-import { Photos } from 'components'
-
-import { Container, Section, PageHeader } from 'rebass'
+import { Photos, Picker } from 'components'
+import { Space, Section, PageHeader } from 'rebass'
 
 const options = [
   {children: 'user', value: 'user'},
@@ -16,8 +15,8 @@ const mapStateToProps = (state) => {
   const { selectedMethod, photosFromMethod } = state
 
   const {
-    isFetching, lastUpdated, items: photos
-  } = photosFromMethod[selectedMethod] || { isFetching: true, items: []}
+    isFetching, lastUpdated, photos
+  } = photosFromMethod[selectedMethod] || { isFetching: true, photos: [] }
 
   return {
     selectedMethod,
@@ -27,32 +26,25 @@ const mapStateToProps = (state) => {
   }
 }
 
-@asyncConnect([mapStateToProps, {
+@asyncConnect([{
+  deferred: false,
   promise: ({store: {dispatch, getState}}) => {
     const promises = []
-    return Promise.all(dispatch(fetchPhotosIfNeeded(getState.selectedMethod)))
-  },
-  showPhoto: (id) => {
-    return dispatch(showPhoto(id))
-  },
-  selectMethod: (nextMethod) => {
-    return dispatch(selectMethod(nextMethod))
-  },
-  invalidateMethod: (selectedMethod) => {
-    return dispatch(invalidateMethod(selectedMethod))
+    promises.push(dispatch(fetchPhotosIfNeeded(getState().selectedMethod)))
+    return Promise.all(promises)
   }
 }])
 @connect(mapStateToProps)
 export default class Gallery extends React.Component {
-  //componentDidMount() {
-  //  this.props.fetchPhotosIfNeeded(this.props.selectedMethod)
-  //}
+  componentDidMount() {
+    fetchPhotosIfNeeded(this.selectedMethod)
+  }
 
-  //componentWillReceiveProps(nextProps) {
-  //  if (nextProps.selectedMethod !== this.props.selectedMethod) {
-  //    this.props.fetchPhotosIfNeeded(nextProps.selectedMethod)
-  //  }
-  //}
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selectedMethod !== this.selectedMethod) {
+      fetchPhotosIfNeeded(nextProps.selectedMethod)
+    }
+  }
 
   handleChange = (nextMethod) => {
     this.props.dispatch(selectMethod(nextMethod))
@@ -61,22 +53,27 @@ export default class Gallery extends React.Component {
   handleRefreshClick = (e) => {
     e.preventDefault()
 
-    const { selectedMethod } = this.props
-    dispatch(invalidateMethod(selectedMethod))
-    dispatch(fetchPhotosIfNeeded(selectedMethod))
+    invalidateMethod(this.selectedMethod)
+    fetchPhotosIfNeeded(this.selectedMethod)
   }
 
   render() {
     const { selectedMethod, photos, isFetching, lastUpdated } = this.props
-    const isEmpty = photos.length === 0
     return (
-      <div style={{paddingTop: 48}}>
+      <div >
         <Helmet title={selectedMethod} />
         <PageHeader heading={selectedMethod} />
-        <Photos {...photos} onPhotoLoad={() => showPhoto} />
+        <Picker value={selectedMethod} onChange={this.handleChange} options={options} /><Space x={2} />
+        <Photos style={{flexWrap: 'wrap', float:'left' }} value={selectedMethod} photos={photos} />
       </div>
     )
   }
+}
+
+Gallery.defaultProps = {
+  selectedMethod: 'user',
+  photos: [],
+  isFetching: false
 }
 
 Gallery.propTypes = {
@@ -85,4 +82,3 @@ Gallery.propTypes = {
   isFetching: PropTypes.bool.isRequired,
   lastUpdated: PropTypes.number
 }
-

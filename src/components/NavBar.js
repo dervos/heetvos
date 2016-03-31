@@ -8,7 +8,7 @@ import {
   Toolbar } from 'rebass'
 
 const NavBar = ({ user }) => (
-  <Fixed top left right zIndex={1}>
+  <Fixed top left right zIndex={1} className="shadow" >
     <Toolbar>
       <NavItem Component={IndexLink} to="/" children={config.app.title} />
       <Space auto />

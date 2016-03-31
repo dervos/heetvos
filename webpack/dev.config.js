@@ -1,7 +1,7 @@
 require('babel-polyfill');
 
 // Webpack config for development
-var fs = require('fs');
+var fs = require('graceful-fs');
 var path = require('path');
 var webpack = require('webpack');
 var assetsPath = path.resolve(__dirname, '../static/dist');
@@ -67,7 +67,6 @@ module.exports = {
   entry: {
     'main': [
       'webpack-hot-middleware/client?path=http://' + host + ':' + port + '/__webpack_hmr',
-      'font-awesome-webpack!./src/theme/font-awesome.config.js',
       './src/client.js'
     ]
   },

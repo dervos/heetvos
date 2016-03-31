@@ -17,7 +17,7 @@ export function selectedMethod(state = 'user', action) {
 function photos(state = {
   isFetching: false,
   didInvalidate: false,
-  items: []
+  photos: []
 }, action) {
   switch (action.type) {
     case INVALIDATE_METHOD:
@@ -33,7 +33,7 @@ function photos(state = {
       return Object.assign({}, state, {
         isFetching: false,
         didInvalidate: false,
-        items: action.photos,
+        photos: action.photos,
         lastUpdated: action.receivedAt
       })
     default:
@@ -87,7 +87,7 @@ function receivePhotos(method, json) {
 function fetchPhotos(method) {
   return dispatch => {
     dispatch(requestPhotos(method));
-    return fetch(`https://api.500px.com/v1/photos?feature=${method}&username=dervos&consumer_key=GvEAXk6cHDuELGqcaV38N2w7LjBTgcha8oVn8zwY&image_size=100&rpp=1`)
+    return fetch(`https://api.500px.com/v1/photos?feature=${method}&username=dervos&consumer_key=GvEAXk6cHDuELGqcaV38N2w7LjBTgcha8oVn8zwY&image_size=21&rpp=25`)
         .then(response => response.json())
         .then(json => dispatch(receivePhotos(method, json)))
   }
